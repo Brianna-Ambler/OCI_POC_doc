@@ -1,0 +1,40 @@
+{
+    "workshoptitle": "RAC Fundamentals",
+    "tutorials": [
+        {
+            "title": "Getting Started",
+            "description": "Get a Free Trial",
+            "filename": "https://raw.githubusercontent.com/oracle/learning-library/master/common/labs/cloud-login/cloud-login-livelabs2.md"
+        },
+         {
+            "title": "Introduction",
+            "description": "This lab walks you through the steps to understand a RAC database and Grid Infrastructure",
+            "filename": "../../intro/intro.md"
+        },
+        {
+            "title": "Lab 1: Connect to DB Instance",
+            "description": "This lab walks you through building a RAC system in the Oracle Cloud.",
+            "filename": "../../dbconnection/connect-db.md"
+        },
+        {
+            "title": "Lab 2: Prepare Setup",
+            "description": "This lab walks you through building a RAC system in the Oracle Cloud.",
+            "filename": "../../RMsetup/setup-livelabs.md"
+        },
+        {
+            "title": "Lab 3: Dataflow stack Execution",
+            "description": "This lab walks you through clusterwarwe reconfigurations and node fencing.",
+            "filename": "../../dataflowsetup/dataflow_stack.md"
+        },
+        {
+            "title": "Lab 4: Graph Stack Execution load",
+            "description": "This lab examines FAN events.",
+            "filename": "../../graphsetup/grpah_stack.md"
+        },
+        {
+            "title": "Lab 5: Run Business queries",
+            "description": "This lab walks you through installing the sample schema.",
+            "filename": "../../output/final_output.md"
+        }
+     ]
+}
