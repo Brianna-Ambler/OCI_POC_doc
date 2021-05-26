@@ -19,7 +19,7 @@
         {
             "title": "Lab 2: Prepare Setup",
             "description": "This lab walks you through building a RAC system in the Oracle Cloud.",
-            "filename": "../../RMsetup/setup-livelabs.md"
+            "filename": "../../rmsetup/setup-livelabs.md"
         },
         {
             "title": "Lab 3: Dataflow stack Execution",
@@ -35,6 +35,11 @@
             "title": "Lab 5: Run Business queries",
             "description": "This lab walks you through installing the sample schema.",
             "filename": "../../output/final_output.md"
+        },
+        {
+            "title": "Need Help?",
+            "description": "Solutions to Common Problems and Directions for Receiving Live Help",
+           "filename":"https://raw.githubusercontent.com/oracle/learning-library/master/common/labs/need-help/need-help-livelabs.md"
         }
      ]
 }

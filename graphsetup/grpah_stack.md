@@ -1,7 +1,10 @@
 # Setup Graph Schema in 19C
 
 ## Introduction to Graph in 19C ##
-Graph setup writeup
+We are using Oracle 19.c databases inbuilt graph database functionality
+
+In this lab we will be creating setup for graph database on oracle 19.c, and we will be creating internal tables related to graph database.
+
 
 Estimated Lab Time: 15 minutes
 
@@ -19,20 +22,25 @@ An Oracle Free Tier or Paid Cloud account
 SSH Keys
 Performed Lab: Prepare Setup
 
-## **STEP 1A**: Create Stack:  Compute + Networking
-1.  Identify the ORM stack zip file dataflow.zip  downloaded in *Lab: Prepare Setup*
+## **STEP 1**: Create Stack:  Create stack Job for graph setup
+1.  Identify the ORM stack zip file Prep\_graph\_engine.zip  downloaded in *Lab: Prepare Setup*
 2.  Login to Oracle Cloud
-3.  Open up the hamburger menu in the left hand corner.  Choose the compartment in which you would like to install.  Under the **Solutions and Platform** submenu, choose **Resource Manager > Stacks**.  
+3.  Open up the hamburger menu in the left hand corner.  Choose the compartment in which you would like to install.  Under the **Developer Services** submenu, choose **Stacks**.  
 
-  ![](./images/em-oci-landing.png " ")
+  ![](./images/1_Launch_stack.jpg " ")
 
-  ![](./images/em-nav-to-orm.png " ")
+  Once the window opens click on create button
 
-  ![](./images/em-create-stack.png " ")
+  ![](./images/2_Create_stack.jpg " ")
 
-4.  Select **My Configuration**, choose the **.ZIP FILE** button, click the **Browse** link and select the zip file (dbsec-lab-mkplc-freetier.zip) that you downloaded. Click **Select**.
+4.  Select **My Configuration**, choose the **.ZIP FILE** button, click the **Browse** link and select the zip file (choose the zip file for prepare graph terraform scripts - Prep\_graph\_engine.zip) that you downloaded. Click **Select**.
 
-  ![](./images/zip-file.png " ")
+  ![](./images/3_Stack_Configuration.jpg " ")
+
+  Click on Browse button and navigate to the path on your computer, where you have downloaded the terraform zip files
+
+*Note:* Make sure correct zip file is selected for this Lab it should be Graph setup terraform script zip file
+  ![](./images/4_Choose_teraform_file.jpg " ")
 
 5. Enter the following information:
 
@@ -41,223 +49,101 @@ Performed Lab: Prepare Setup
       - **Create in compartment**:  Select the correct compartment if not already selected
 
      ***Note:*** *If this is a newly provisioned tenant such as freetier with no user created compartment, stop here and first create it before proceeding.*
+
+     ![](./images/5_Version_and_other_config.jpg " ")
+
 6.  Click **Next**.
 
-  ![](./images/em-create-stack-2.png " ")
+  ![](./images/6_Click_next_config.jpg " ")
 
-7. Enter or select the following:
-    - **Instance Count:** Accept the default, **1**, unless you intend to create more for a team for instance
-    - **Select Availability Domain:** Select an availability domain from the dropdown list.
-    - **SSH Public Key**:  Paste the public key you created in the earlier lab
+7. Configure the variables used in terraform script:
+    - **CompartmentID1:** OCID of the compartment you would like to perform this Lab, make sure you have create resources privileges' in this compartment
+    - **DBIP:** IP address of the database
 
-    ***Note:*** *If you used the Oracle Cloud Shell to create your key, make sure you paste the pub file in a notepad, remove any hard returns.  The file should be one line or you will not be able to login to your compute instance*
-8. Depending on the quota you have in your tenancy you can choose from standard Compute shapes or Flex shapes.  We recommend standard shapes unless not available or you have run out of quota (Please visit the Appendix: Troubleshooting Tips for instructions on checking your quota)
-    - **Use Flexible Instance Shape with Adjustable OCPU Count?:** Keep the default as checked (unless you plan on using a fixed shape)
-    - **Instance Shape:** Keep the default ***VM.Standard.E3.Flex*** as selected, the only option for Flex shapes.
-    - **Instance OCPUS:** Accept the default shown. e.g. (**4**) will provision 4 OCPUs and 64GB of memory. You may also elect to reduce or increase the count by selecting from the dropdown. e.g. `[2-24]`. Please ensure you have the capacity available before increasing.
-9. If don't have quota for Flex Shapes or you prefer to use fixed shapes, follow the instructions below.  Otherwise skip to the next step.
-    - **Use Flexible Instance Shape with Adjustable OCPU Count?:** Unchecked
-    - **Instance Shape:** Accept the default shown or select from the dropdown. e.g. VM.Standard.E2.4
+8. Click **Next**.
 
-  ![](./images/standardshape.png " ")
+![](./images/7_Configure_TF_variables.jpg " ")
 
-10. For this section we will provision a new VCN with all the appropriate ingress and egress rules needed to run this workshop.  If you already have a VCN, make sure it has all of the correct ingress and egress rules and skip to the next section.
-    - **Use Existing VCN?:** Accept the default by leaving this unchecked. This will create a **new VCN**.
+9. Review the configurations and click **Create**.
 
-11. Click **Next**.
-12. Review and click **Create**.
-
-  ![](./images/em-create-stack-3.png " ")
+  ![](./images/8_Review_config.jpg " ")
 
 13. Your stack has now been created!  
 
-  ![](./images/em-stack-details.png " ")
+  ![](./images/9_Launch_ETL_load.jpg " ")
 
-You may now proceed to Step 2 (skip Step 1B).
-
-## **STEP 1B**: Create Stack:  Compute only
-If you just completed Step 1A, please proceed to Step 2.  If you have an existing VCN and are comfortable updating VCN configurations, please ensure your VCN meets the minimum requirements. Refer to *Lab: Prepare Setup*       
-
-***Note:*** *We recommend letting our stack to create the VCN to reduce the potential for error.*
-
-1.  Identify the ORM stack zip file downloaded in *Lab: Prepare Setup*
-2.  Login to Oracle Cloud
-3.  Open up the hamburger menu in the left hand corner.  Choose the compartment in which you would like to install.  Choose **Resource Manager > Stacks**.  
-
-  ![](./images/em-oci-landing.png " ")
-
-  ![](./images/em-nav-to-orm.png " ")
-
-  ![](./images/em-create-stack.png " ")
-
-4. Select **My Configuration**, click the **Browse** link and select the zip file (dbsec-lab-mkplc-freetier.zip) that you downloaded. Click **Select**.
-
-  ![](./images/em-create-stack-1.png " ")
-
-  Enter the following information:
-    - **Name**:  Enter a name  or keep the prefilled default (*DO NOT ENTER ANY SPECIAL CHARACTERS HERE*, including periods, underscores, exclamation etc, it will mess up the configuration and you will get an error during the apply process)
-    - **Description**:  Same as above
-    - **Create in compartment**:  Select the correct compartment if not already selected
-
-  ***Note:*** *If this is a newly provisioned tenant such as freetier with no user created compartment, stop here and first create it before proceeding.*
-
-5. Click **Next**.
-
-  ![](./images/em-create-stack-2b.png " ")
-
-  Enter or select the following:
-    - **Instance Count:** Keep the default to **1** to create only one instance. You may also choose to a higher number if you need more than one instance created.
-    - **Select Availability Domain:** Select an availability domain from the dropdown list.
-    - **SSH Public Key**:  Paste the public key you created in the earlier lab
-
-  ***Note:*** *If you used the Oracle Cloud Shell to create your key, make sure you paste the pub file in a notepad, remove any hard returns.  The file should be one line or you will not be able to login to your compute instance*
-
-    - **Use Flexible Instance Shape with Adjustable OCPU Count?:** Keep the default as checked (unless you plan on using a fixed shape)
-    - **Instance Shape:** Keep the default ***VM.Standard.E3.Flex*** as selected, the only option for Flex shapes.
-    - **Instance OCPUS:** Accept the default shown. e.g. (**4**) will provision 4 OCPUs and 64GB of memory. You may also elect to reduce or increase the count by selecting from the dropdown. e.g. `[2-24]`. Please ensure you have the capacity available before increasing.
-    - **Use Existing VCN?:** Check to select.
-
-  ![](./images/em-create-stack-2c.png " ")
-
-    - **Select Existing VCN?:** Select existing VCN with regional public subnet and required security list.
-
-  ![](./images/em-create-stack-2d.png " ")
-
-    - **Select Public Subnet:** Select existing public subnet from above VCN.
-
-   ***Note:*** *For an existing VCN Option to be used successful, review the details at the bottom of this section*
-
-6. If you prefer to use fixed shapes, follow the instructions below.  Otherwise skip to the next step.
-    - **Use Flexible Instance Shape with Adjustable OCPU Count?:** Unchecked
-    - **Instance Shape:** Accept the default shown or select from the dropdown. e.g. VM.Standard.E2.4
-
-  ![](./images/standardshape-2.png " ")
-
-7. Review and click **Create**.
-
-  ![](./images/em-create-stack-3b.png " ")
-
-8. Your stack has now been created!
-
-  ![](./images/em-stack-details-b.png " ")
+You may now proceed to Next steps
 
 ## **STEP 2**: Terraform Plan (OPTIONAL)
 When using Resource Manager to deploy an environment, execute a terraform **plan** to verify the configuration. This is optional, *you may skip directly to Step 3*.
 
-1.  **[OPTIONAL]** Click **Terraform Actions** -> **Plan** to validate your configuration.  This takes about a minute, please be patient.
-
-  ![](./images/em-stack-plan-1.png " ")
-
-  ![](./images/em-stack-plan-2.png " ")
-
-  ![](./images/em-stack-plan-results-1.png " ")
-
-  ![](./images/em-stack-plan-results-2.png " ")
-
-  ![](./images/em-stack-plan-results-3.png " ")
-
-  ![](./images/em-stack-plan-results-4.png " ")
+  Follow similar steps in Lab 3 Step2
+ *Note:* make sure you choose stack job for graph setup task, before launching plan operation
 
 ## **STEP 3**: Terraform Apply
 When using Resource Manager to deploy an environment, execute a terraform **apply** to actually create the configuration.  Let's do that now.
 
-1.  At the top of your page, click on **Stack Details**.  click the button, **Terraform Actions** -> **Apply**.  This will create your network (unless you opted to use and existing VCN) and the compute instance.
+1.  At the top of your page, click on **Stack Details**.  click the button, **Terraform Actions** -> **Apply**.
 
-  ![](./images/em-stack-details-post-plan.png " ")
+  ![](./images/15_Apply_ETL_load_TF.jpg " ")
 
-  ![](./images/em-stack-apply-1.png " ")
+*Note:* Please monitor the apply operation and the stack job executed successfully after you performed apply action
 
-  ![](./images/em-stack-apply-2.png " ")
 
-2.  Once this job succeeds, you will get an apply complete notification from Terraform.  Examine it closely, 8 resources have been added (3 only if using an existing VCN).
+## **STEP 4**: Validate the data is Loaded using sqlDeveloper tool
 
-  ***Note:*** *If you encounter any issues running the terraform stack, visit the Appendix: Troubleshooting Tips section below.*
+1. Connect to Database instance as directed in Lab1 Step2
 
-  ![](./images/em-stack-apply-results-0.png " ")
+2. Execute below queries to validate the database
 
-  ![](./images/em-stack-apply-results-1.png " ")
+  This query gives you friends for a given CUSTOMER
 
-  ![](./images/em-stack-apply-results-2.png " ")
+  example : in the following query we are trying to find the friends of a customer with customer social media id = "8011010848"
 
-  ![](./images/em-stack-apply-results-3.png " ")
+  ~~~~sql
+  SELECT
+T0$4.V AS "CUST_F_SM_ID$V"
+FROM "POC".oci_poc_graphGT$ T0$0,
+( SELECT L.VID, L.VL, R.K, R.T, R.V, R.VN, R.VT
+  FROM "POC".oci_poc_graphVD$ L,
+       (SELECT * FROM "POC".oci_poc_graphVT$ WHERE K=n'SOCIAL_MEDIA_ID' ) R
+  WHERE L.VID = R.VID(+)
+) T0$1,
+( SELECT L.VID, L.VL, R.K, R.T, R.V, R.VN, R.VT
+  FROM "POC".oci_poc_graphVD$ L,
+       (SELECT * FROM "POC".oci_poc_graphVT$ WHERE K=n'CUSTOMER_NAME' ) R
+  WHERE L.VID = R.VID(+)
+) T0$2,
+( SELECT L.VID, L.VL, R.K, R.T, R.V, R.VN, R.VT
+  FROM "POC".oci_poc_graphVD$ L,
+       (SELECT * FROM "POC".oci_poc_graphVT$ WHERE K=n'LONGITUDE' ) R
+  WHERE L.VID = R.VID(+)
+) T0$3,
+( SELECT L.VID, L.VL, R.K, R.T, R.V, R.VN, R.VT
+  FROM "POC".oci_poc_graphVD$ L,
+       (SELECT * FROM "POC".oci_poc_graphVT$ WHERE K=n'SOCIAL_MEDIA_ID' ) R
+  WHERE L.VID = R.VID(+)
+) T0$4,
+( SELECT L.VID, L.VL, R.K, R.T, R.V, R.VN, R.VT
+  FROM "POC".oci_poc_graphVD$ L,
+       (SELECT * FROM "POC".oci_poc_graphVT$ WHERE K=n'LATITUDE' ) R
+  WHERE L.VID = R.VID(+)
+) T0$5
+WHERE T0$0.SVID=T0$1.VID AND
+T0$0.DVID=T0$2.VID AND
+T0$0.DVID=T0$3.VID AND
+T0$0.DVID=T0$4.VID AND
+T0$0.DVID=T0$5.VID AND
+(T0$1.VL = n'PERSON' AND T0$1.VL IS NOT NULL) AND
+(T0$2.VL = n'PERSON' AND T0$2.VL IS NOT NULL) AND
+(T0$0.EL = n'KNOWS' AND T0$0.EL IS NOT NULL) AND
+(T0$1.T = 1 AND T0$1.V = n'8011010848')
+  ~~~~
 
-3.  Congratulations, your environment is created!  Click on the Application Information tab to get additional information about what you have just done.
+  Example: screen shot for the query execution in SQLDeveloper and the result, displaying 5 friends of the customer
 
-  ![](./images/app-info.png " ")
+  ![](./images/16_final_query.jpg " ")
 
-4.  Your public IP address and instance name will be displayed.  Note the public IP address, you will need it for the next step.
-
-## **STEP 4**: Connect to your instance
-
-Choose the environment where you created your ssh-key in the previous lab (Generate SSH Keys)
-***Note:*** *If you are not using Cloud Shell and are using your laptop to connect your corporate VPN may prevent you from logging in.*
-
-### Oracle Cloud Shell
-
-1. To re-start the Oracle Cloud shell, go to your Cloud console and click the Cloud Shell icon to the right of the region.
-
-  ***Note:*** *Make sure you are in the region you were assigned*
-
-  ![](./images/em-cloudshell.png " ")
-
-2.  If you didn't jot down your compute instances public IP address, go to **Compute** -> **Instance** and select the instance you created (make sure you choose the correct compartment)
-3.  On the instance homepage, find the Public IP address for your instance.
-4.  Enter the command below to login to your instance.
-    ````
-    ssh -i ~/.ssh/<sshkeyname> opc@<Your Compute Instance Public IP Address>
-    ````
-    ![](./images/em-cloudshell-ssh.png " ")
-
-5.  When prompted, answer **yes** to continue connecting.
-6.  Continue to Step 5 on the left hand menu.
-
-### MAC or Windows CYGWIN Emulator
-1.  Go to **Compute** -> **Instance** and select the instance you created (make sure you choose the correct compartment)
-2.  On the instance homepage, find the Public IP address for your instance.
-3.  Open up a terminal (MAC) or cygwin emulator as the opc user.  Enter yes when prompted.
-
-    ````
-    ssh -i ~/.ssh/<sshkeyname> opc@<Your Compute Instance Public IP Address>
-    ````
-    ![](./images/em-mac-linux-ssh-login.png " ")
-
-4.  After successfully logging in, you may *proceed to the next lab*
-
-### Windows using Putty
-
-On Windows, you can use PuTTY as an SSH client. PuTTY enables Windows users to connect to remote systems over the internet using SSH and Telnet. SSH is supported in PuTTY, provides for a secure shell, and encrypts information before it's transferred.
-
-1.  Download and install PuTTY. [http://www.putty.org](http://www.putty.org)
-2.  Run the PuTTY program. On your computer, go to **All Programs > PuTTY > PuTTY**
-3.  Select or enter the following information:
-    - Category: _Session_
-    - IP address: _Your service instance’s public IP address_
-    - Port: _22_
-    - Connection type: _SSH_
-
-  ![](images/7c9e4d803ae849daa227b6684705964c.jpg " ")
-
-#### **Configuring Automatic Login**
-
-1.  In the category section, **Click** Connection and then **Select** Data.
-
-2.  Enter your auto-login username. Enter **opc**.
-
-  ![](images/36164be0029033be6d65f883bbf31713.jpg " ")
-
-#### **Adding Your Private Key**
-
-1.  In the category section, **Click** Auth.
-2.  **Click** browse and find the private key file that matches your VM’s public key. This private key should have a .ppk extension for PuTTy to work.
-
-  ![](images/df56bc989ad85f9bfad17ddb6ed6038e.jpg " ")
-
-To save all your settings:
-
-3.  In the category section, **Click** session.
-4.  In the saved sessions section, name your session, for example ( EM13C-ABC ) and **Click** Save.
-
-You may now proceed to the next lab.
 
 ## Appendix:  Terraform and Resource Manager
 Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently.  Configuration files describe to Terraform the components needed to run a single application or your entire datacenter.  In this lab a configuration file has been created for you to build network and compute components.  The compute component you will build creates an image out of Oracle's Cloud Marketplace.  This image is running Oracle Linux 7.
@@ -359,8 +245,3 @@ If you have other compute instances you are not using, you can go to those insta
 * **Author** - Rene Fontcha, Master Principal Solutions Architect, NA Technology
 * **Contributors** - Kay Malcolm, Product Manager, Database Product Management
 * **Last Updated By/Date** - Kay Malcolm, Product Manager, Database Product Management, September 2020
-
-## Need Help?
-Please submit feedback or ask for help using our [LiveLabs Support Forum](https://community.oracle.com/tech/developers/categories/livelabsdiscussions). Please click the **Log In** button and login using your Oracle Account. Click the **Ask A Question** button to the left to start a *New Discussion* or *Ask a Question*.  Please include your workshop name and lab name.  You can also include screenshots and attach files.  Engage directly with the author of the workshop.
-
-If you do not have an Oracle Account, click [here](https://profile.oracle.com/myprofile/account/create-account.jspx) to create one.
